@@ -8,6 +8,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +36,7 @@ public class ScanActivity extends AppCompatActivity {
     FloatingActionButton ArButton;
     String API_KEY = "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";
     Thesaurus.GetSynonymsTask task;
-    Button Synonyms;
+    ImageView Synonyms;
     private static final int PERMISSION = 100;
     private static final String TAG = ScanActivity.class.getSimpleName();
 
@@ -44,6 +45,8 @@ public class ScanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
+
+        java.util.Objects.requireNonNull(getSupportActionBar()).hide();
 
         surfaceView = findViewById(R.id.camera);
         text = findViewById(R.id.text);

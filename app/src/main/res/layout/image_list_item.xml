@@ -4,10 +4,11 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:id="@+id/list_item_image"
-        android:padding="10dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/corners"
         />
 
 </RelativeLayout>

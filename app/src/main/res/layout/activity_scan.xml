@@ -6,44 +6,36 @@
     android:layout_height="match_parent"
     tools:context=".ScanActivity">
 
-    <Button
-        android:id="@+id/SynonymsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Capture"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="25dp"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <LinearLayout
+        android:orientation="vertical"
+        android:weightSum="4"
+        android:layout_marginBottom="10dp">
+
+        <SurfaceView
+            android:id="@+id/camera"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="4">
+            android:layout_height="0dp"
+            android:layout_weight="2.5"
+            />
 
-            <SurfaceView
-                android:id="@+id/camera"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="3"
-                />
-            <TextView
-                android:id="@+id/text"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:text="Hello World!"
-                android:gravity="center"/>
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
+            android:textSize="20dp"
+            android:text="Scanned text will appear here..."
+            android:gravity="center"/>
 
-        </LinearLayout>
-
+        <ImageView
+            android:id="@+id/SynonymsButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/capture"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"/>
     </LinearLayout>
 
 </RelativeLayout>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.text.Spannable;
@@ -16,40 +17,39 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.ar.sceneform.ux.ArFragment;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class InfoActivity extends AppCompatActivity {
     private String[] words;
     private int currentWordIndex = 0;
-    private ArFragment arFragment;
-    private int highlightedWordStartIndex = 0;
-    private int highlightedWordEndIndex = 0;
     private TextToSpeech textToSpeech;
     Thesaurus.GetSynonymsTask synonymsTask;
     private TextView sentenceTextView;
-    Button editText;
+    ImageView editText;
     private LinearLayout synonymsLayout;
     private TextView synonymsTextView;
     private ImageView imageView;
-    private Button previousButton;
+    private ImageView previousButton, nextButton;
     String sentence = "";
-    private Button play, pause;
-    private Button nextButton;
     private boolean speaking;
     TextView def, fos;
     Thread read;
 
-    LinearLayout LoadLayout;
-    Button LoadImage, LoadModel;
+    ImageView LoadImage, LoadModel;
     RecyclerView recyclerView;
     ProgressDialog progressDialog;
     OnLoaded onLoaded;
+    HashMap<String, String> hash_map;
+    private boolean mIsPlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,26 +60,37 @@ public class InfoActivity extends AppCompatActivity {
         synonymsTextView = findViewById(R.id.synonyms_textview);
         imageView = findViewById(R.id.imageview);
         previousButton = findViewById(R.id.previous_button);
-        play = findViewById(R.id.play);
-        pause = findViewById(R.id.pause);
         nextButton = findViewById(R.id.next_button);
         synonymsLayout = findViewById(R.id.synonyms_layout);
         def = findViewById(R.id.def);
         fos = findViewById(R.id.fos);
         LoadImage = findViewById(R.id.load_image);
-        LoadLayout = findViewById(R.id.load_button);
-        LoadLayout.setVisibility(View.INVISIBLE);
-//        recyclerView = findViewById(R.id.recycler);
+        Picasso.get().load(R.drawable.picture).into(LoadImage);
         progressDialog = new ProgressDialog(InfoActivity.this);
         progressDialog.setMessage("Loading Image...");
         LoadModel = findViewById(R.id.load_model);
         editText = findViewById(R.id.edit_query);
+
+        ImageView play_pause = findViewById(R.id.play_pause);
+        Picasso.get().load(R.drawable.play).into(play_pause);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
+        buttons_visibility(false);
 
         sentence = getIntent().getStringExtra("recognisedText");
         char[] symbols = {'!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~', '\n'};
         for (char symbol : symbols) {
             sentence = sentence.replace(String.valueOf(symbol), " ");
         }
+
+//3d models
+
+        hash_map = new HashMap<String, String>();
+        hash_map.put("Flower",  "https://raw.githubusercontent.com/TejasGirhe/3D-Model-Libraray/main/flower/scene.gltf");
+        hash_map.put("Avocado", "https://raw.githubusercontent.com/TejasGirhe/3D-Models/main/avocado/scene.gltf");
+
 
         words = sentence.split(" ");
         sentenceTextView.setText(sentence);
@@ -148,6 +159,7 @@ public class InfoActivity extends AppCompatActivity {
                     currentWordIndex++;
                     if (currentWordIndex >= words.length || currentWordIndex < 0) {
                         currentWordIndex = 0;
+                        runOnUiThread(() -> Picasso.get().load(R.drawable.play).into(play_pause));
                         speaking = false;
                     }
                 }
@@ -155,32 +167,35 @@ public class InfoActivity extends AppCompatActivity {
         };
         read = new Thread(runnable);
 
-        play.setOnClickListener(new View.OnClickListener() {
+        play_pause.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                speaking = true;
-                if (currentWordIndex >= words.length) {
-                    currentWordIndex = 0;
-                }
-                if (!read.isAlive()) {
-                    read = new Thread(runnable);
-                    read.start();
-                } else {
-                    synchronized (read) {
-                        read.notify();
+            public void onClick(View view) {
+                if (!speaking) {
+                    mIsPlaying = true;
+                    Picasso.get().load(R.drawable.pause).into(play_pause);
+
+                    speaking = true;
+                    if (currentWordIndex >= words.length) {
+                        currentWordIndex = 0;
                     }
+                    if (!read.isAlive()) {
+                        read = new Thread(runnable);
+                        read.start();
+                    } else {
+                        synchronized (read) {
+                            read.notify();
+                        }
+                    }
+                } else {
+                    mIsPlaying = false;
+                    currentWordIndex--;
+                    speaking = false;
+                    read.interrupt();
+                    Picasso.get().load(R.drawable.play).into(play_pause);
                 }
             }
         });
 
-        pause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentWordIndex--;
-                speaking = false;
-                read.interrupt();
-            }
-        });
 
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,9 +230,6 @@ public class InfoActivity extends AppCompatActivity {
 
             }
         });
-
-
-
     }
 
     private void highlightCurrentWord(String sentence) {
@@ -248,99 +260,92 @@ public class InfoActivity extends AppCompatActivity {
         SpannableStringBuilder builder = new SpannableStringBuilder(sentence);
         builder.setSpan(new BackgroundColorSpan(Color.BLUE), wordStartIndex, wordEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         sentenceTextView.setText(builder);
-
-        highlightedWordStartIndex = wordStartIndex;
-        highlightedWordEndIndex = wordEndIndex;
     }
 
     private void updateWordUI(String word) {
         getSynonyms(word);
     }
 
+    @SuppressLint("SetTextI18n")
     private void getSynonyms(String word){
         try{
-            synonymsTask = new Thesaurus.GetSynonymsTask(new Thesaurus.ThesaurusCallback() {
-                @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
-                @Override
-                public void onSynonymsFetched(ArrayList<ArrayList<String>> List) {
-                    synonymsTextView.setText("Synonyms : " + List.get(0).toString().substring(1, List.get(0).toString().length() - 1));
-                    fos.setText("FOS : " + List.get(2).get(0).toString());
-                    if(!(List.get(2).get(0).contains("conjuction") || List.get(2).get(0).contains("preposition") || List.get(2).get(0).contains("article")))
-                    {
-                        try{
-                            def.setText("DEF : " + List.get(1).get(0).toString());
-                        }catch (Exception e){
-                            System.out.println(e.toString());
-                        }
+            synonymsTask = new Thesaurus.GetSynonymsTask(List -> {
+                synonymsTextView.setText(List.get(0).toString().substring(1, List.get(0).toString().length() - 1));
+                fos.setText(List.get(2).get(0));
+                if(!(List.get(2).get(0).contains("conjuction") || List.get(2).get(0).contains("preposition") || List.get(2).get(0).contains("article")))
+                {
+                    try{
+                        def.setText(List.get(1).get(0));
+                    }catch (Exception e){
+                        System.out.println(e);
                     }
+                }
 
-                    String currentWord = word;
-                    String POS = fos.getText().toString();
-                    if(POS.contains("noun") || POS.contains("pronoun"))  // || List.get(2).get(0).contains("verb")
+                String POS = fos.getText().toString();
+                if(POS.contains("noun") || POS.contains("pronoun"))  // || List.get(2).get(0).contains("verb")
+                {
+                    if(POS.contains("pronoun"))
                     {
-                        if(POS.contains("pronoun"))
+                        if(word.toLowerCase(Locale.ROOT).contains("he") || word.toLowerCase(Locale.ROOT).contains("him") || word.toLowerCase(Locale.ROOT).contains("her") || word.toLowerCase(Locale.ROOT).contains("she"))
                         {
-                            if(currentWord.toLowerCase(Locale.ROOT).contains("he") || currentWord.toLowerCase(Locale.ROOT).contains("him") || currentWord.toLowerCase(Locale.ROOT).contains("her") || currentWord.toLowerCase(Locale.ROOT).contains("she"))
-                            {
-                                LoadLayout.setVisibility(View.VISIBLE);
-                                LoadImage.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent intent = new Intent(InfoActivity.this, ImageActivity.class);
-                                        intent.putExtra("word", currentWord);
-                                        startActivity(intent);
-                                    }
-                                });
-                                LoadModel.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent intent = new Intent(InfoActivity.this, ModelActivity.class);
-                                        intent.putExtra("word", currentWord);
-                                        startActivity(intent);
-                                    }
-                                });
+                            buttons_visibility(true);
+                            LoadImage.setOnClickListener(v -> {
+                                Intent intent = new Intent(InfoActivity.this, ImageActivity.class);
+                                intent.putExtra("word", word);
+                                startActivity(intent);
+                            });
+                            LoadModel.setOnClickListener(v -> {
+                                loadModel(word);
+                            });
 
-                            }
-                            else
-                            {
-                                LoadLayout.setVisibility(View.INVISIBLE);
-                            }
                         }
-                        else{
-                            LoadLayout.setVisibility(View.VISIBLE);
-                            LoadImage.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(InfoActivity.this, ImageActivity.class);
-                                    intent.putExtra("word", currentWord);
-                                    startActivity(intent);
-                                }
-                            });
-                            LoadModel.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(InfoActivity.this, ModelActivity.class);
-                                    intent.putExtra("word", currentWord);
-                                    startActivity(intent);
-                                }
-                            });
+                        else
+                        {
+                            buttons_visibility(false);
                         }
                     }
                     else{
-                        LoadLayout.setVisibility(View.INVISIBLE);
+                        buttons_visibility(true);
+                        LoadImage.setOnClickListener(v -> {
+                            Intent intent = new Intent(InfoActivity.this, ImageActivity.class);
+                            intent.putExtra("word", word);
+                            startActivity(intent);
+                        });
+                        LoadModel.setOnClickListener(v -> {
+                            loadModel(word);
+                        });
                     }
+                }
+                else{
+                    buttons_visibility(false);
                 }
             });
             synonymsTask.execute(word);
         }catch (Exception e){
-            System.out.println(e.toString());
+            System.out.println(e);
         }
     }
 
+    private void loadModel(String word) {
+        String title = word;
+        title = title.substring(0, 1).toUpperCase() + title.substring(1);
 
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-            textToSpeech.setLanguage(Locale.US);
+        Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+
+        if(hash_map.containsKey(title)){
+            Uri intentUri =
+                    Uri.parse("https://arvr.google.com/scene-viewer/1.0").buildUpon()
+                            .appendQueryParameter("file", hash_map.get(title))
+                            .appendQueryParameter("mode", "3d_preferred")
+                            .appendQueryParameter("title", title)
+                            .appendQueryParameter("link", hash_map.get(title))
+                            .appendQueryParameter("enable_vertical_placement", "true")
+                            .build();
+            sceneViewerIntent.setData(intentUri);
+            sceneViewerIntent.setPackage("com.google.ar.core");
+            startActivity(sceneViewerIntent);
+        }else{
+            Toast.makeText(this, "Model is not available yet...", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -350,16 +355,13 @@ public class InfoActivity extends AppCompatActivity {
         textToSpeech.shutdown();
     }
 
-
-    private void getImageResource(String word) {
-        final String str = word.trim();
-        LoadLayout.setVisibility(View.VISIBLE);
-        LoadImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                new ImageGenerator(InfoActivity.this).generate(str, 600, 600, 1, onLoaded);
-            }
-        });
+    void buttons_visibility(boolean flag){
+        if(flag){
+            LoadModel.setVisibility(View.VISIBLE);
+            LoadImage.setVisibility(View.VISIBLE);
+        }else{
+            LoadModel.setVisibility(View.INVISIBLE);
+            LoadImage.setVisibility(View.INVISIBLE);
+        }
     }
 }

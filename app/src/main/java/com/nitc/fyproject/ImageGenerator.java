@@ -22,6 +22,7 @@ import java.util.Map;
 
 public class ImageGenerator {
     private final String url = "https://stablediffusionapi.com/api/v3/text2img";
+//    private final String url1 = " https://api.deepai.org/api/stable-diffusion ";
     private final Context context;
 
     public ImageGenerator(Context context) {
@@ -32,10 +33,13 @@ public class ImageGenerator {
         ArrayList<String> arrayList = new ArrayList<>();
         JSONObject js = new JSONObject();
         try {
-            String key = "kriGpn0qhlMgIwsBAvRcGetYFdZow2VL4un98X8Z6LG7LN0VbI69vhCmfWUJ";
+
+            //D2slBGtUAyTQJMkQPhBdh3FVLM9GHP1rRgvJY3qFsVXypy9xU3KCVIkBlIHx
+            String key = "D2slBGtUAyTQJMkQPhBdh3FVLM9GHP1rRgvJY3qFsVXypy9xU3KCVIkBlIHx";
+//            String key = "e2ba337c-7d4a-4f1c-9424-c32b2ba964b2";
             js.put("key", key);
             js.put("prompt", prompt);
-            js.put("samples", count);
+//            js.put("samples", count);
             js.put("width", width);
             js.put("height", height);
 

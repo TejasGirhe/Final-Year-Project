@@ -11,21 +11,34 @@
         android:id="@+id/text_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/sentence_textview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_alignParentTop="true"
-            android:hint="Scanned text will appear here..."/>
-        <Button
-            android:id="@+id/edit_query"
+        android:orientation="horizontal"
+        >
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="edit"
-            android:layout_gravity="right"/>
+            android:layout_gravity="start"
+            android:layout_marginBottom="30dp">
+            <TextView
+                android:id="@+id/sentence_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:hint="Scanned text will appear here..."
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="30dp"/>
+
+            <ImageView
+                android:id="@+id/edit_query"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/edit"
+                android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
+
+
     </LinearLayout>
 
 
@@ -36,35 +49,101 @@
         android:layout_below="@+id/text_layout"
         android:layout_above="@+id/buttons_layout"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="start">
 
-        <TextView
-            android:id="@+id/synonyms_textview"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/lower_border"
+            android:layout_marginTop="15dp"/>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:hint="Synonyms"
-            android:padding="5dp"
-            />
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="15dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="Synonyms        "
+                android:padding="5dp"
+                android:layout_marginRight="10dp"
+                />
+            <TextView
+                android:id="@+id/synonyms_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="5dp"
+                />
 
-        <TextView
-            android:id="@+id/def"
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/lower_border"
+            android:layout_marginTop="15dp"/>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="5dp"
-            android:hint="Definition"/>
-
-        <TextView
-            android:id="@+id/fos"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="Definition          "
+                android:padding="4dp"
+                android:layout_marginRight="10dp"
+                />
+            <TextView
+                android:id="@+id/def"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="5dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/lower_border"
+            android:layout_marginTop="15dp"/>
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="5dp"
-            android:hint="Part of speech"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="Part of Speech"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"
+                />
+            <TextView
+                android:id="@+id/fos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="5dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/lower_border"
+            android:layout_marginTop="15dp"/>
 
         <ImageView
             android:id="@+id/imageview"
@@ -87,26 +166,6 @@
         android:layout_alignParentLeft="true"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/load_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center">
-
-            <Button
-                android:id="@+id/load_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Load Image"/>
-
-            <Button
-                android:id="@+id/load_model"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Load 3d MOdel"
-                android:layout_marginRight="10dp"/>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -117,30 +176,46 @@
             android:layout_alignParentLeft="true"
             android:orientation="horizontal">
 
-            <Button
+            <ImageView
+                android:id="@+id/load_image"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/picture"
+                android:scaleType="fitCenter"
+                android:layout_margin="10dp"
+                />
+
+            <ImageView
                 android:id="@+id/previous_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="prev"/>
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:scaleType="fitCenter"
+                android:layout_margin="10dp"
+                android:src="@drawable/prev"/>
 
-            <Button
-                android:id="@+id/play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="play"/>
-
-            <Button
-                android:id="@+id/pause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pause"/>
-
-            <Button
+            <ImageView
+                android:id="@+id/play_pause"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:scaleType="fitCenter"
+                android:layout_margin="10dp"
+                android:src="@drawable/play"/>
+            <ImageView
                 android:id="@+id/next_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Next"/>
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:scaleType="fitCenter"
+                android:layout_margin="10dp"
+                android:src="@drawable/next"/>
 
+            <ImageView
+                android:id="@+id/load_model"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/ar"
+                android:scaleType="fitCenter"
+                android:layout_margin="10dp"
+                />
         </LinearLayout>
 
     </LinearLayout>

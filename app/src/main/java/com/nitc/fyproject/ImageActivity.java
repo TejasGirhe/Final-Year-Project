@@ -32,7 +32,7 @@ public class ImageActivity extends AppCompatActivity {
         };
 
 
-        new ImageGenerator(ImageActivity.this).generate(title, 600, 600, 4, onLoaded);
+        new ImageGenerator(ImageActivity.this).generate(title, 600, 600, 1, onLoaded);
 
     }
 
