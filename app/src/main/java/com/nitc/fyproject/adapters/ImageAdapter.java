@@ -1,4 +1,4 @@
-package com.nitc.fyproject;
+package com.nitc.fyproject.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.nitc.fyproject.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

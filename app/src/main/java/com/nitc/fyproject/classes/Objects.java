@@ -1,4 +1,4 @@
-package com.nitc.fyproject;
+package com.nitc.fyproject.classes;
 
 import android.content.Context;
 import android.content.res.AssetManager;
