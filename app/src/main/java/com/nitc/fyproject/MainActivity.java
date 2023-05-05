@@ -7,6 +7,9 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.FirebaseApp;
+import com.nitc.fyproject.kotlin.KotlinImageActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     Button scan, type;
@@ -15,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseApp.initializeApp(this);
 
         scan = findViewById(R.id.scan);
         type = findViewById(R.id.type);
@@ -29,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
         type.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, KotlinImageActivity.class);
+//                intent.putExtra("language", "In kotlin");
+//                startActivity(intent);
                 startActivity(new Intent(MainActivity.this, TypeActivity.class));
             }
         });

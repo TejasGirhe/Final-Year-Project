@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TypeActivity">
+    tools:context=".TypeActivity"
+    android:background="@drawable/bg">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -19,7 +20,9 @@
             android:id="@+id/typed_text"
             android:layout_width="300dp"
             android:layout_height="200dp"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="20dp"
+            android:hint="Type text here..."
+            android:textColor="@color/black"/>
 
         <Button
             android:id="@+id/process"
@@ -27,7 +30,8 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:text="process"
-            android:layout_gravity="right"/>
+            android:layout_gravity="right"
+            android:textColor="@color/black"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,9 @@
 package com.nitc.fyproject.classes;
 
 public class WordInfo {
-    private String synonyms;
-    private String partOfSpeech;
-    private String definition;
+     public String synonyms;
+     public String partOfSpeech;
+     public String definition;
 
     public WordInfo(){
 

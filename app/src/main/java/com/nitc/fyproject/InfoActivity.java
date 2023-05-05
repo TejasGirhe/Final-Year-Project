@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -23,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.L;
 import com.nitc.fyproject.adapters.ImageAdapter;
 import com.nitc.fyproject.classes.LoadingDialog;
 import com.nitc.fyproject.classes.Models3D;
@@ -33,30 +34,31 @@ import com.nitc.fyproject.classes.WordInfo;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
 
 public class InfoActivity extends AppCompatActivity {
     private String[] words;
     private int currentWordIndex = 0;
     private TextToSpeech textToSpeech;
-    Thesaurus.GetSynonymsTask synonymsTask;
+    ArrayList<ArrayList<String>> List;
     private LinearLayout synonymsLayout;
     private TextView synonymsTextView, def, pos, sentenceTextView;
     private ImageView previousButton, nextButton, imageView, editText, LoadImage, LoadModel, play_pause;
     String sentence = "";
     private boolean speaking;
     Thread read;
-    LinearLayout defLayout, SynsLayout, posLayout;
+    LinearLayout defLayout, posLayout;
     RecyclerView recyclerView;
     ProgressDialog progressDialog;
     OnLoaded onLoaded;
     HashMap<String, String> hash_map;
-    HashMap<String, WordInfo> dict;
+    static volatile HashMap<String, WordInfo> dict;
     private LoadingDialog loadingDialog;
     RelativeLayout info_layout;
-
+    private AsyncTask<String, Void, ArrayList<ArrayList<String>>> synonymsTask;
+    CountDownLatch latch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,11 +66,27 @@ public class InfoActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         findView();
         buttons_visibility(false);
-
+        textToSpeech = new TextToSpeech(this, status -> {
+            if (status != TextToSpeech.ERROR) {
+                textToSpeech.setLanguage(Locale.ENGLISH);
+            } else {
+                textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            textToSpeech.setLanguage(Locale.ENGLISH);
+                        } else {
+                            Toast.makeText(InfoActivity.this, status, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
 
         loadingDialog = new LoadingDialog(this, "info_loading");
         loadingDialog.show();
         info_layout.setVisibility(View.INVISIBLE);
+
         Handler handler = new Handler();
         Runnable loadingrunnable = new Runnable() {
             @Override
@@ -86,28 +104,17 @@ public class InfoActivity extends AppCompatActivity {
         words = sentence.split(" ");
         sentenceTextView.setText(sentence);
         speaking = false;
+
+        latch = new CountDownLatch(words.length);
         dict = getInfo();
+
+
         editText.setOnClickListener(v -> {
             Intent intent = new Intent(InfoActivity.this, TypeActivity.class);
             intent.putExtra("text", sentence);
             startActivity(intent);
         });
-        textToSpeech = new TextToSpeech(this, status -> {
-            if (status != TextToSpeech.ERROR) {
-                textToSpeech.setLanguage(Locale.ENGLISH);
-            } else {
-                textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(int status) {
-                        if (status != TextToSpeech.ERROR) {
-                            textToSpeech.setLanguage(Locale.ENGLISH);
-                        } else {
-                            Toast.makeText(InfoActivity.this, status, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
+
         onLoaded = arrayList -> {
             ImageAdapter adapter = new ImageAdapter(InfoActivity.this, arrayList);
             recyclerView.setAdapter(adapter);
@@ -174,6 +181,7 @@ public class InfoActivity extends AppCompatActivity {
                 textToSpeech.speak(words[currentWordIndex], TextToSpeech.QUEUE_FLUSH, null, null);
                 updateUI();
                 read.interrupt();
+                Picasso.get().load(R.drawable.play).into(play_pause);
                 speaking = false;
             }
 
@@ -190,9 +198,10 @@ public class InfoActivity extends AppCompatActivity {
             updateUI();
             read.interrupt();
             speaking = false;
-
+            Picasso.get().load(R.drawable.play).into(play_pause);
         });
     }
+
 
     private String cleanSentence(String sentence) {
         char[] symbols = {'!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~', '\n'};
@@ -226,6 +235,10 @@ public class InfoActivity extends AppCompatActivity {
 
         info_layout = findViewById(R.id.info_layout);
 
+//hide
+        synonymsLayout.setVisibility(View.INVISIBLE);
+        defLayout.setVisibility(View.INVISIBLE);
+        posLayout.setVisibility(View.INVISIBLE);
     }
 
     private void highlightCurrentWord(String sentence) {
@@ -256,31 +269,27 @@ public class InfoActivity extends AppCompatActivity {
     private HashMap<String, WordInfo> getInfo() {
 
         HashMap<String, WordInfo> wordInfos = new HashMap<String, WordInfo>();
+
         for (String word : words) {
+
             try {
                 WordInfo wordInfo = new WordInfo();
+
                 synonymsTask = new Thesaurus.GetSynonymsTask(List -> {
-                    if (List.get(0).toString().substring(1, List.get(0).toString().length() - 1).equals("")) {
+                    if (List.get(0).size() == 0) {
                         wordInfo.setSynonyms("");
                     } else {
                         wordInfo.setSynonyms(List.get(0).toString().substring(1, List.get(0).toString().length() - 1));
                     }
-                    if (List.get(2).get(0) == null) {
+                    if (List.get(2).size() == 0) {
                         wordInfo.setPartOfSpeech("");
                     } else {
                         wordInfo.setPartOfSpeech(List.get(2).get(0));
                     }
-                    if (!(List.get(2).get(0).contains("conjuction") || List.get(2).get(0).contains("preposition") || List.get(2).get(0).contains("article"))) {
-                        try {
-                            if (List.get(1).get(0) == null) {
-                                wordInfo.setDefinition("");
-                            } else {
-                                wordInfo.setDefinition(List.get(1).get(0));
-                            }
-                        } catch (Exception e) {
-                            wordInfo.setDefinition("");
-                            System.out.println(e.toString());
-                        }
+                    if (List.get(1).size() == 0) {
+                        wordInfo.setDefinition("");
+                    } else {
+                        wordInfo.setDefinition(List.get(1).get(0));
                     }
                 });
                 synonymsTask.execute(word);
@@ -345,8 +354,6 @@ public class InfoActivity extends AppCompatActivity {
 
         String word = words[currentWordIndex];
         WordInfo wordInfo = dict.get(word);
-        ArrayList<String> pronouns = new ArrayList<>(Arrays.asList("he", "him", "her", "she"));
-
         String Pos = wordInfo.getPartOfSpeech();
         String Syns = wordInfo.getSynonyms();
         String Def = wordInfo.getDefinition();
@@ -356,8 +363,7 @@ public class InfoActivity extends AppCompatActivity {
         } else {
             posLayout.setVisibility(View.VISIBLE);
             pos.setText(Pos.substring(0, 1).toUpperCase() + Pos.substring(1));
-            buttons_visibility(Pos.contains("noun"));
-//            buttons_visibility(Pos.contains("pronoun") && pronouns.contains(word.toLowerCase(Locale.ROOT)));
+            buttons_visibility(Pos.equals("noun"));
         }
         if (Syns == null || Syns.equals("")) {
             synonymsLayout.setVisibility(View.GONE);

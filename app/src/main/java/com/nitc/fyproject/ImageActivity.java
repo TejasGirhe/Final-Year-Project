@@ -25,6 +25,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.nitc.fyproject.classes.LoadingDialog;
 
 import java.io.BufferedReader;
@@ -42,7 +48,7 @@ public class ImageActivity extends AppCompatActivity {
     private ImageAdapter adapter;
     private List<String> imageUrls;
     LoadingDialog loadingDialog;
-    String host_link = "https://8891-35-193-169-138.ngrok-free.app/";
+    String host_link = "https://af58-34-91-81-38.ngrok-free.app/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +61,7 @@ public class ImageActivity extends AppCompatActivity {
         loadingDialog.show();
 
 
-        String word = getIntent().getStringExtra("word");
+        String word = getIntent().getStringExtra("word").trim();
         word = word.substring(0, 1).toUpperCase() + word.substring(1);
 
         TextView textView = findViewById(R.id.title);
@@ -63,12 +69,10 @@ public class ImageActivity extends AppCompatActivity {
         try {
             ApiTask apiTask = new ApiTask();
             apiTask.execute(word);
-
         } catch (Exception e) {
-            Toast.makeText(this, "There's some error loading images...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "There's some error loading images...", Toast.LENGTH_SHORT).show();
             throw new RuntimeException(e);
         }
-
 
     }
 

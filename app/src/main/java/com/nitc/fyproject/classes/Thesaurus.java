@@ -31,9 +31,10 @@ public class Thesaurus {
         protected ArrayList<ArrayList<String>> doInBackground(String... params) {
             ArrayList<ArrayList<String>> list = new ArrayList<>();
             ArrayList<String> synonyms = new ArrayList<>();
-            ArrayList<String> defList = new ArrayList<String>();
+            ArrayList<String> defList = new ArrayList<>();
             String partOfSpeech = "";
             try {
+
                 URL url = new URL("https://www.dictionaryapi.com/api/v3/references/thesaurus/json/" + params[0] + "?key=" + API_KEY);
 
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -96,10 +97,9 @@ public class Thesaurus {
 
                 JSONArray jsonArray = new JSONArray(response.toString());
                 JSONObject jsonObject = jsonArray.getJSONObject(0);
-
                 partOfSpeech = jsonObject.getString("fl");
-            } catch (IOException | JSONException e) {
-                partOfSpeech = "article";
+            } catch (Exception e) {
+                partOfSpeech = "";
                 System.out.println("IO : An error occurred while fetching FOS " + e.getMessage());
             }
             ArrayList<String> fos = new ArrayList<>();

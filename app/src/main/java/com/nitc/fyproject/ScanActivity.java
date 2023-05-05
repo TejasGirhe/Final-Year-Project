@@ -63,8 +63,8 @@ public class ScanActivity extends AppCompatActivity {
             Toast.makeText(this, "Not Working", Toast.LENGTH_SHORT).show();
         } else {
             cameraSource = new CameraSource.Builder(getApplicationContext(), textRecognizer)
-                    .setFacing(CameraSource.CAMERA_FACING_BACK).setRequestedPreviewSize(1280, 1024)
-                    .setAutoFocusEnabled(true).setRequestedFps(1.0f).build();
+                    .setFacing(CameraSource.CAMERA_FACING_BACK).setRequestedPreviewSize(800, 600)
+                    .setAutoFocusEnabled(true).setRequestedFps(10f).build();
 
             surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
@@ -114,7 +114,6 @@ public class ScanActivity extends AppCompatActivity {
                                 Synonyms.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-//                                        Intent intent = new Intent(MainActivity.this, SynonymsActivity.class);
                                         Intent intent = new Intent(ScanActivity.this, InfoActivity.class);
                                         String str = text.getText().toString();
                                         str = str.replace("\n", " ");

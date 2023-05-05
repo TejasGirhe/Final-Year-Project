@@ -4,7 +4,9 @@
     android:id="@+id/info_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".InfoActivity">
+    tools:context=".InfoActivity"
+    android:background="@drawable/bg"
+    >
 
     <LinearLayout
         android:id="@+id/text_layout"
@@ -27,7 +29,8 @@
                 android:layout_alignParentTop="true"
                 android:hint="Scanned text will appear here..."
                 android:layout_alignParentLeft="true"
-                android:layout_marginRight="30dp"/>
+                android:layout_marginRight="30dp"
+                android:textColor="@color/black"/>
 
             <ImageView
                 android:id="@+id/edit_query"
@@ -56,28 +59,40 @@
             android:id="@+id/synonyms_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_gravity="bottom"
             android:paddingTop="10dp"
-            android:background="@drawable/lower_border"
             android:paddingBottom="10dp"
             >
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="Synonyms        "
-                android:padding="5dp"
-                android:layout_marginRight="10dp"
-                />
-            <TextView
-                android:id="@+id/synonyms_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:padding="5dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="Synonyms        "
+                    android:padding="5dp"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/black"
+                    />
+                <TextView
+                    android:id="@+id/synonyms_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:textColor="@color/black"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:background="@drawable/lower_border"
                 />
 
         </LinearLayout>
@@ -86,54 +101,78 @@
             android:id="@+id/defLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:background="@drawable/lower_border"
             >
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="Definition          "
-                android:padding="4dp"
-                android:layout_marginRight="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="Definition          "
+                    android:padding="4dp"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/black"
+                    />
+                <TextView
+                    android:id="@+id/def"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:padding="5dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:background="@drawable/lower_border"
                 />
-            <TextView
-                android:id="@+id/def"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:padding="5dp"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/posLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:background="@drawable/lower_border"
             >
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="Part of Speech"
-                android:padding="5dp"
-                android:layout_marginRight="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="Part of Speech"
+                    android:padding="5dp"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/black"
+                    />
+                <TextView
+                    android:id="@+id/fos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:background="@drawable/lower_border"
                 />
-            <TextView
-                android:id="@+id/fos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:padding="5dp"/>
         </LinearLayout>
 
         <ImageView
